@@ -36,10 +36,10 @@ body.react-confirm-alert-body-element {
   width: 400px;
   padding: 30px;
   text-align: left;
-  background:    #53829b;
+  background:    #e6f2f8;
   border-radius: 10px;
   box-shadow: 0 20px 75px rgba(0, 0, 0, 0.13);
-  color: white;
+  color: black;
 }
 
 .react-confirm-alert-svg {
@@ -69,7 +69,7 @@ body.react-confirm-alert-body-element {
 
 .react-confirm-alert-button-group > button {
   outline: none;
-  background: #333;
+  background: rgba(22, 163, 74, 1);
   border: none;
   display: inline-block;
   padding: 6px 18px;
