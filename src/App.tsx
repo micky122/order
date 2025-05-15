@@ -1,6 +1,6 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import './App.css';
-
+import './App.scss';
 import { AlertCircleIcon, ImageUpIcon, XIcon } from "lucide-react"
 
 import { FileWithPreview, useFileUpload } from "./hooks/use-file-upload"
@@ -31,6 +31,12 @@ function App() {
 
   // Cancel upload image
   const [uploading, setUploading] = useState<boolean>(false);
+  // Using sass
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
+  }
 
   const maxSizeMB = 5
   const maxSize = maxSizeMB * 1024 * 1024 // 5MB default
@@ -69,7 +75,16 @@ function App() {
       console.error('Fetch error:', error);
     }
   }
+  // using sass
+  useEffect(() => {
+    localStorage.setItem('theme', theme)
+  }, [theme])
   
+  useEffect(() => {
+    const saved = localStorage.getItem('theme') as 'light' | 'dark'
+    if (saved) setTheme(saved)
+  }, [])
+  // end sass
   useEffect(()=>{
     fetchRates();
   }, [rate]);
@@ -136,13 +151,17 @@ function App() {
 
 
   return (
-    <div className='App min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white'>
-      <div className=" min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white p-6 max-w-md mx-auto rounded-xl shadow-md space-y-6">
-        <h1 className="text-2xl font-bold text-center">T-Shirt Designer</h1>
+    <div className={`app-wrapper ${theme}`}>
+      <div className={`app-wrapper ${theme} min-h-screen p-6 max-w-md mx-auto rounded-xl shadow-md space-y-6`}>
+        <h1 className="text-2xl font-bold text-center relative">T-Shirt Order <button style={{right:"-10%"}} className={theme==='light'?'w-8 absolute rounded-full bg-slate-900 text-white':'w-8 rounded-full absolute bg-slate-100 text-black'} onClick={toggleTheme}>
+          {theme === 'light' ? 'D' : 'L'}
+        </button>
+        </h1>
+        
         <div>
           <label className="block font-medium mb-1">Product</label>
           <select
-            className="w-full p-2 border rounded border-slate-700 bg-slate-800 hover:border-slate-400 focus:border-slate-400"
+            className={theme==="light"?"w-full p-2 border bg-cyan-50 rounded hover:border-slate-400 focus:border-slate-400":"w-full p-2 border rounded hover:border-slate-400 bg-slate-800 focus:border-slate-400"}
             value={product}
             onChange={(e: ChangeEvent<HTMLSelectElement>) => setProduct(e.target.value as Order['product'])}
           >
@@ -153,7 +172,7 @@ function App() {
         <div className=''>
           <label className="block font-medium mb-1">Rate</label>
           <select
-            className="w-full p-2 border-slate-700 border rounded bg-slate-800 hover:border-slate-400 focus:border-slate-400"
+            className={theme==="light"?"w-full p-2 border bg-cyan-50 rounded hover:border-slate-400 focus:border-slate-400":"w-full p-2 border rounded hover:border-slate-400 bg-slate-800 focus:border-slate-400"}
             value={rate}
             onChange={(e: ChangeEvent<HTMLSelectElement>) => setRate(e.target.value)}
           >
@@ -165,7 +184,7 @@ function App() {
         <div className=''>
           <label className="block font-medium mb-1">Color</label>
           <select
-            className="w-full p-2 border-slate-700 border rounded bg-slate-800 hover:border-slate-400 focus:border-slate-400"
+            className={theme==="light"?"w-full p-2 border bg-cyan-50 rounded hover:border-slate-400 focus:border-slate-400":"w-full p-2 border rounded hover:border-slate-400 bg-slate-800 focus:border-slate-400"}
             value={color}
             onChange={(e: ChangeEvent<HTMLSelectElement>) => setColor(e.target.value)}
           >
@@ -192,7 +211,7 @@ function App() {
           <div>
             <label className="block font-medium mb-1">Material</label>
             <select
-              className="w-full p-2 border-slate-700 border rounded bg-slate-800 hover:border-slate-400 focus:border-slate-400"
+              className={theme==="light"?"w-full p-2 border bg-cyan-50 rounded hover:border-slate-400 focus:border-slate-400":"w-full p-2 border rounded hover:border-slate-400 bg-slate-800 focus:border-slate-400"}
               value={material}
               onChange={(e: ChangeEvent<HTMLSelectElement>) => setMaterial(e.target.value as Order['material'])}
             >
@@ -204,7 +223,7 @@ function App() {
         <div>
           <label className="block font-medium mb-1">Text (First 8 chars free, +$5 for 9–16)</label>
           <input
-            className="w-full p-2 border-slate-700 border rounded bg-slate-800 hover:border-slate-400 focus:border-slate-400"
+            className={theme==="light"?"w-full p-2 border bg-cyan-50 rounded hover:border-slate-400 focus:border-slate-400":"w-full p-2 border rounded hover:border-slate-400 bg-slate-800 focus:border-slate-400"}
             type="text"
             maxLength={16}
             value={text}

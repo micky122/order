@@ -1,0 +1,27 @@
+.app-wrapper {
+  @apply min-h-screen transition-colors duration-500;
+
+  &.light {
+    background: linear-gradient(
+      to bottom right,
+      #e0f2fe,  // sky-100
+      #bae6fd,  // sky-200
+      #f0f9ff   // light blend from blue-50
+    );
+    color: #111827;
+
+  }
+  
+  &.dark {
+    background: linear-gradient(to bottom right, #0f172a, #1e293b); // dark gradient
+    color: #f9fafb;
+  }
+
+  .content {
+    @apply max-w-md mx-auto p-8 rounded-xl shadow-xl;
+  }
+
+  .btn {
+    @apply mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700;
+  }
+}
