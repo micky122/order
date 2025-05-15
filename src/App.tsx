@@ -1,9 +1,12 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import './App.css';
 import './App.scss';
-import { AlertCircleIcon, ImageUpIcon, XIcon } from "lucide-react"
+import { AlertCircleIcon, ImageUpIcon, XIcon } from "lucide-react";
+import toast, { Toaster } from 'react-hot-toast';
+import { FileWithPreview, useFileUpload } from "./hooks/use-file-upload";
+import { confirmAlert } from 'react-confirm-alert';
+import './react-confirm-alert.css';
 
-import { FileWithPreview, useFileUpload } from "./hooks/use-file-upload"
 interface Order {
   product: 'tshirt' | 'sweater';
   color: string;
@@ -115,43 +118,52 @@ function App() {
   };
 
   const handleSubmit = async (): Promise<void> => {
-    if(window.confirm("Are you sure?")) {
-
-      const formData = new FormData();
-      formData.append('product', product);
-      formData.append('color', color);
-      formData.append('rate', rate);
-      formData.append('material', material);
-      formData.append('text', text);
-      formData.append('price', price.toString());
-      if (image[0]?.file instanceof File) {
-        formData.append('image', image[0].file);
-      }
-
-      try {
-        const res = await fetch('http://localhost:8080/api/order', {
-          method: 'POST',
-          body: formData,
-        });
-        const { ok } = await res.json();
-        if(res.ok) {
-          console.log(ok)
-          setUploading(false);
-        } else {
-          alert("Failed to submit order");
+    confirmAlert({
+      title: 'Confirm to submit',
+      message: 'Are you sure you want to submit this order?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: async () => {
+            const formData = new FormData();
+              formData.append('product', product);
+              formData.append('color', color);
+              formData.append('rate', rate);
+              formData.append('material', material);
+              formData.append('text', text);
+              formData.append('price', price.toString());
+              if (image[0]?.file instanceof File) {
+                formData.append('image', image[0].file);
+              }
+        
+              try {
+                const res = await fetch('http://localhost:8080/api/order', {
+                  method: 'POST',
+                  body: formData,
+                });
+                const { ok } = await res.json();
+                if(res.ok) {
+                  setUploading(false);
+                } else {
+                  toast.error("Failed to submit order");
+                }
+              } catch(error) {
+                toast.error("An error occurred during upload.")
+              }
+              toast.success('Order submitted!');
+          }
+        },
+        {
+          label: 'No',
+          onClick: () => console.log('Cancelled')
         }
-      } catch(error) {
-        alert("An error occurred during upload.")
-      }
-      alert('Order submitted!');
-    } else {
-      return ;
-    }
-    };
-
+      ]
+    });
+  };
 
   return (
     <div className={`app-wrapper ${theme}`}>
+      <Toaster position="top-center" />
       <div className={`app-wrapper ${theme} min-h-screen p-6 max-w-md mx-auto rounded-xl shadow-md space-y-6`}>
         <h1 className="text-2xl font-bold text-center relative">T-Shirt Order <button style={{right:"-10%"}} className={theme==='light'?'w-8 absolute rounded-full bg-slate-900 text-white':'w-8 rounded-full absolute bg-slate-100 text-black'} onClick={toggleTheme}>
           {theme === 'light' ? 'D' : 'L'}
